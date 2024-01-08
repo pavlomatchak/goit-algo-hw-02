@@ -2,6 +2,7 @@ from queue import Queue
 import random
 
 queue = Queue()
+id = 1
 
 class StopCycle(Exception): pass
 
@@ -10,23 +11,25 @@ def generate_request():
         print('Queue overflow')
         return
 
-    for i in range(0, random.randint(1, 4)):
-        id = random.randint(0, 100)
-        queue.put(f"Application {id}")
-        print(f"Application {id} added to queue")
+    global id
+    queue.put(f"Application {id}")
+    print(f"Application {id} added to queue")
+    id += 1
 
 def process_request():
-    for i in range(0, random.randint(1, 4)):
-        if queue.empty():
-            print('Queue is empty')
-            raise StopCycle
+    if queue.empty():
+        print('Queue is empty')
+        raise StopCycle
 
-        last = queue.get()
-        print(f"{last} processed")
+    last = queue.get()
+    print(f"{last} processed")
 
 try:
     while True:
-        generate_request()
-        process_request()
+        for i in range(0, random.randint(1, 4)):
+            generate_request()
+
+        for i in range(0, random.randint(1, 4)):
+            process_request()
 except StopCycle:
     pass
